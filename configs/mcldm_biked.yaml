@@ -1,0 +1,65 @@
+eps_model_arch:
+  vae_model_id:               'stabilityai/stable-diffusion-2-1' # 'stabilityai/stable-diffusion-xl-base-1.0'
+  start_channels:             64 # increased from 32
+  num_levels:                 4
+  num_blocks_per_level:       4  # increased from 2
+  nonlinearity:               'selu'
+  dropout:                    0.05  # changed from 0.15
+  time_emb_dim:               128
+  pos_emb_dim:                64
+  cond_dims:                  ['bs_dim', 'tc_dim', 'bst_dim', 'bdt_dim', 'fs_dim', 'rsf_dim', 'rsr_dim', 'ft_dim']
+  numerical_cond:             ['tc_dim']
+  bs_dim:                     20
+  tc_dim:                     1
+  bst_dim:                    2
+  bdt_dim:                    2
+  fs_dim:                     5
+  rsf_dim:                    3
+  rsr_dim:                    3
+  ft_dim:                     3
+  y_embed_dim:                10
+  attention_levels:           [1, 2, 3]
+  attention_heads:            8  # increased from 4
+  attention_head_dim:         64
+
+diffusion_cfg:
+  n_steps:                    1000
+  beta_1:                     0.0001
+  beta_2:                     0.02
+  beta_schedule:              'linear' # 'cosine'
+
+params:
+  loss_fn:                    'l2'
+  data_module:                'biked_latent'
+  train_split:                0.85
+  image_size:                 512
+  images_dir:                 '/home/q652493/Projects/BIKED_Dataset/2048_Sketch_Bike' # '/home/q652493/Projects/BIKED_Dataset/2048_sketch_subset'
+  conditions_csv:             '/home/q652493/Projects/BIKED_Dataset/df_parameters_final.csv'
+  batch_size:                 32
+  lr:                         1e-4 # changed from 0.0018
+  beta_1:                     0.9
+  beta_2:                     0.99
+  weight_decay:               1e-6
+  checkpoint_callback_params:
+    monitor:                  "val/loss"
+    mode:                     "min"
+    every_n_train_steps:      1000
+    save_last:                True
+    save_top_k:               -1
+    auto_insert_metric_name:  False
+  trainer_params:
+    max_epochs:               6500
+    max_steps:                -1
+    num_sanity_val_steps:     2
+    accumulate_grad_batches:  2  # virtual batch size = num_gpus * accumulate_grad_batches * batch_size = 1 * 2 * 32 = 64
+    log_every_n_steps:        10
+    limit_val_batches:        16
+    precision:                "16-mixed"
+
+spars_params:
+  sparsity_scheduler:         'linear'
+  sparsity:                    0.1
+  step_size:                   100
+  target_sparsity:             0.25
+  target_epoch:                -1
+  mask_value:                  -1

@@ -1,0 +1,73 @@
+eps_model_arch:
+  vae_model_id:               'stabilityai/stable-diffusion-2-1' # 'stabilityai/stable-diffusion-xl-base-1.0'
+  start_channels:             128  # change 64 -> 128
+  num_levels:                 4   # change 3 -> 4 # a level less than for Biked as images are smaller
+  num_blocks_per_level:       4   # change 5 -> 4 # one more as for biked as we have a resolution level less
+  nonlinearity:               'selu'
+  dropout:                    0.05
+  time_emb_dim:               128
+  pos_emb_dim:                64
+  cond_dims:                  ['brand', 'model', 'type', 'year', 'color', 'entry_price', 'length', 'width', 'height', 'num_doors', 'num_seats', 'power', 'mpg', 'top_speed'] # ['view_point', 'brand', 'model', 'type', 'year', 'color', 'entry_price', 'length', 'width', 'height', 'num_doors', 'num_seats', 'power', 'mpg', 'top_speed']
+  numerical_cond:             ['entry_price', 'year', 'length', 'width', 'height', 'num_doors', 'num_seats', 'power', 'mpg', 'top_speed']
+  # view_point:                 9  # removed viewpoint when using quality checked front views
+  brand:                      101
+  model:                      981
+  type:                       17
+  year:                       1
+  color:                      23
+  entry_price:                1
+  length:                     1
+  width:                      1
+  height:                     1
+  num_doors:                  1
+  num_seats:                  1
+  power:                      1
+  mpg:                        1
+  top_speed:                  1
+  y_embed_dim:                32 # change 10 -> 32
+  attention_levels:           [1, 2, 3]
+  attention_heads:            8
+  attention_head_dim:         64
+
+diffusion_cfg:
+  n_steps:                    1000
+  beta_1:                     0.0001
+  beta_2:                     0.02
+  beta_schedule:              'linear'
+
+params:
+  loss_fn:                    'l2'
+  data_module:                'dvm_latent'
+  train_split:                0.8
+  image_size:                 256  # reduce size to closest 2^x <300
+  images_dir:                 '/home/q652493/Projects/DVM-Cars/Images_quality_checked'
+  conditions_csv:             '/home/q652493/Projects/DVM-Cars/Tables'
+  batch_size:                 128  # change 32 -> 128
+  lr:                         1e-4
+  beta_1:                     0.9
+  beta_2:                     0.99
+  weight_decay:               1e-6
+  checkpoint_callback_params:
+    monitor:                  "val/loss"
+    mode:                     "min"
+    every_n_train_steps:      1000
+    save_last:                True
+    save_top_k:               10  # changed from -1 to 10 to save only best k steps
+    auto_insert_metric_name:  False
+  trainer_params:
+    max_epochs:               -1
+    max_steps:                500000 # change 562500 -> 500000
+    num_sanity_val_steps:     2
+    accumulate_grad_batches:  1  # virtual batch size = num_gpus * accumulate_grad_batches * batch_size = 1 * 1 * 128 = 128
+    log_every_n_steps:        10
+    limit_val_batches:        16
+    precision:                "16-mixed"
+
+spars_params:
+  sparsity_scheduler:         'linear'
+  sparsity:                    0.1  # change to 0.1
+  step_size:                   100
+  target_sparsity:             0.25 # change to 0.25
+  target_epoch:                -1
+  target_steps:                -1
+  mask_value:                  -1
