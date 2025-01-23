@@ -2,8 +2,6 @@
 In this folder you may find code related to the *Masked Conditioning* project. Roughly speaking, two different models are implemented: mcVAE and mcLDM.
 
 ## mcVAE
-The implementation of the mcVAE is largely inspired by the project from Daniel Müller found in [this](https://atc-github.azure.cloud.bmw/NewTech/bLa_VAE_Daniel_Mueller) repository. However, some bugs were fixed and the approach was improved by adding embedding layers for the conditions and changing how the masked conditioning is integrated. Further, a convolutional variant of the mcVAE inspired by the [BigGAN](https://github.com/ajbrock/BigGAN-PyTorch) architecture was implemented.
-
 To summarize an mcVAE works by training a standard VAE and concatenating an embedded conditioning vector to the latent representation before applying the decoder. Further, the conditioning information is masked randomly s.t. only a random subset of all conditions is available for the model at any time during training. The masking probability i.e. how many conditions are removed at any point in time is changed during training using a sparsity scheduler. This training regime enables the model to work with an arbitrary amount of conditions at inference time, allowing the user to specify only a sparse subset of conditions instead of the full conditioning vector and still obtain high quality results.
 
 To train an mcVAE on parametric/vector data use the `train_mcvae.py` script as follows:
