@@ -39,8 +39,6 @@ Please refer to the provided configuration files as examples on how to configure
 | Path | Description |
 |---|---|
 | train_*.py | Training scripts for mcLDM and mcVAE. |
-| ./_notebooks | Jupyter notebooks with code for some dataset analysis, experiments with different types of architecture, experiments with different datasets, dataset preprocessing, some evaluation. |
 | ./configs | Configuration files defining architecture and training hyperparameters for (latent) diffusion models. |
-| ./experiments | Jupyter notebooks for specific experiments. Contains notebooks for SHAP studies, explainability experiments, hyperparameter tuning, sparsity scheduler parameter tuning, experiments with dataset size, and some other experiments. |
 | ./modules | Reusable code for the project. Contains utilities, sparsity scheduler implementation, implementation of all models, training scripts, evaluation scripts, loss functions, and global parameters. |
 | ./modules/diffusion_components | Implementation of components necessary for a diffusion mode. Includes beta schedule, time embedding layer, the time conditional Unet, Up and Down blocks of the Unet backbone, and the modified ResBlocks. |
